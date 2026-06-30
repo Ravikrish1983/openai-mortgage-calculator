@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Pre-Approval Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: #f7f7f8;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .form-wrapper {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 32px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            font-size: 28px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-content h1 {
+            font-size: 22px;
+            color: #1a202c;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .header-content p {
+            color: #718096;
+            font-size: 13px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            background: #f9fafb;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input::placeholder {
+            color: #cbd5e0;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-prefix {
+            position: absolute;
+            left: 14px;
+            top: 38px;
+            font-size: 16px;
+            color: #a0aec0;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .input-group input {
+            padding-left: 30px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Pre-Approval Card - Rocket Mortgage Style */
+        .approval-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+            border-radius: 12px;
+            padding: 28px;
+            color: white;
+            margin-top: 28px;
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.25);
+            animation: cardPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .approval-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        @keyframes cardPop {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .approval-card.show {
+            display: block;
+        }
+
+        .card-message {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-message strong {
+            font-weight: 700;
+            font-size: 18px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .card-content {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-section {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .card-section:last-of-type {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .card-label {
+            font-size: 13px;
+            opacity: 0.9;
+            text-transform: capitalize;
+        }
+
+        .card-value {
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            text-align: right;
+        }
+
+        .card-footer {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 11px;
+            opacity: 0.85;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 16px;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .section-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 24px 0;
+        }
+
+        @media (max-width: 480px) {
+            .form-wrapper {
+                padding: 24px;
+            }
+
+            .header-content h1 {
+                font-size: 20px;
+            }
+
+            .card-content {
+                padding: 20px;
+            }
+
+            .card-value {
+                font-size: 18px;
+            }
+
+            .card-message {
+                font-size: 15px;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 3px;
+            height: 3px;
+            background: currentColor;
+            border-radius: 50%;
+            margin-left: 4px;
+            animation: blink 1.4s infinite;
+        }
+
+        @keyframes blink {
+            0%, 20%, 50%, 80%, 100% { opacity: 1; }
+            40% { opacity: 0.2; }
+            60% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-wrapper">
+            <div class="header">
+                <div class="header-icon">🏠</div>
+                <div class="header-content">
+                    <h1>Mortgage Pre-Approval</h1>
+                    <p>Get your instant estimate</p>
+                </div>
+            </div>
+
+            <form id="mortgageForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        placeholder="Enter your full name"
+                        required
+                    >
+                    <div class="error-message" id="nameError"></div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="form-group">
+                    <label for="annualIncome">Annual Income</label>
+                    <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input 
+                            type="number" 
+                            id="annualIncome" 
+                            name="annualIncome" 
+                            placeholder="75,000"
+                            min="0"
+                            step="1000"
+                            required
+                        >
+                    </div>
+                    <div class="error-message" id="incomeError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="monthlyDebt">Monthly Debt Obligations</label>
+                    <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input 
+                            type="number" 
+                            id="monthlyDebt" 
+                            name="monthlyDebt" 
+                            placeholder="500"
+                            min="0"
+                            step="100"
+                            required
+                        >
+                    </div>
+                    <div class="error-message" id="debtError"></div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    Get Pre-Approval Estimate
+                </button>
+            </form>
+
+            <div class="approval-card" id="approvalCard">
+                <div class="card-message">
+                    Great news, <strong id="cardName">-</strong> — you could be prequalified for up to <strong id="cardAmount">-</strong>!
+                </div>
+
+                <div class="card-content">
+                    <div class="card-section">
+                        <div class="card-label">Prequalified for</div>
+                        <div class="card-value" id="loanAmount">$0</div>
+                    </div>
+
+                    <div class="card-section">
+                        <div class="card-label">Down payment</div>
+                        <div class="card-value" id="downPayment">$0</div>
+                    </div>
+
+                    <div class="card-section">
+                        <div class="card-label">Rate / APR</div>
+                        <div class="card-value" id="rateDisplay">0% / 0%</div>
+                    </div>
+
+                    <div class="card-section">
+                        <div class="card-label">Expires</div>
+                        <div class="card-value" id="expiration">-</div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    ✓ This is a pre-approval estimate based on information provided. Final approval subject to verification and property appraisal.
+                </div>
+
+                <button type="button" class="reset-btn" onclick="resetForm()">
+                    ← Start Over
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('mortgageForm');
+        const approvalCard = document.getElementById('approvalCard');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearErrors();
+
+            const name = document.getElementById('name').value.trim();
+            const annualIncome = parseFloat(document.getElementById('annualIncome').value);
+            const monthlyDebt = parseFloat(document.getElementById('monthlyDebt').value);
+
+            if (!validateForm(name, annualIncome, monthlyDebt)) {
+                return;
+            }
+
+            const approvalData = calculatePreApproval(name, annualIncome, monthlyDebt);
+            displayApprovalCard(approvalData);
+        });
+
+        function validateForm(name, annualIncome, monthlyDebt) {
+            let isValid = true;
+
+            if (!name || name.length < 2) {
+                showError('nameError', 'Please enter a valid name');
+                isValid = false;
+            }
+
+            if (isNaN(annualIncome) || annualIncome <= 0) {
+                showError('incomeError', 'Annual income must be greater than $0');
+                isValid = false;
+            }
+
+            if (isNaN(monthlyDebt) || monthlyDebt < 0) {
+                showError('debtError', 'Monthly debt cannot be negative');
+                isValid = false;
+            }
+
+            const monthlyIncome = annualIncome / 12;
+            const debtToIncomeRatio = monthlyDebt / monthlyIncome;
+
+            if (debtToIncomeRatio > 0.50) {
+                showError('debtError', 'Monthly debt exceeds 50% of monthly income');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function calculatePreApproval(name, annualIncome, monthlyDebt) {
+            const monthlyIncome = annualIncome / 12;
+            
+            // Calculate max monthly payment using debt-to-income ratio
+            const maxMonthlyPayment = Math.min(
+                monthlyIncome * 0.28,
+                monthlyIncome * 0.36 - monthlyDebt
+            );
+
+            // Interest rate (market-based)
+            const baseRate = 6.1;
+            const apr = 6.58;
+
+            // 30-year mortgage calculation
+            const monthlyRate = baseRate / 100 / 12;
+            const numberOfPayments = 30 * 12;
+            
+            const loanAmount = maxMonthlyPayment * 
+                ((Math.pow(1 + monthlyRate, numberOfPayments) - 1) / 
+                (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)));
+
+            // Total home value and down payment
+            const totalHomeValue = loanAmount / 0.80;
+            const downPayment = totalHomeValue * 0.20;
+
+            // Expiration date (30 days from now)
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + 30);
+            const formattedDate = expirationDate.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+
+            return {
+                name: name.split(' ')[0],
+                loanAmount: Math.round(loanAmount),
+                downPayment: Math.round(downPayment),
+                interestRate: baseRate.toFixed(1),
+                apr: apr.toFixed(2),
+                expirationDate: formattedDate
+            };
+        }
+
+        function displayApprovalCard(data) {
+            document.getElementById('cardName').textContent = data.name;
+            document.getElementById('cardAmount').textContent = '$' + data.loanAmount.toLocaleString();
+            document.getElementById('loanAmount').textContent = '$' + data.loanAmount.toLocaleString();
+            document.getElementById('downPayment').textContent = '$' + data.downPayment.toLocaleString();
+            document.getElementById('rateDisplay').textContent = data.interestRate + '% / ' + data.apr + '%';
+            
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + 30);
+            document.getElementById('expiration').textContent = expirationDate.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+
+            approvalCard.classList.add('show');
+
+            setTimeout(() => {
+                approvalCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        function showError(elementId, message) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+                el.textContent = '';
+            });
+        }
+
+        function resetForm() {
+            form.reset();
+            approvalCard.classList.remove('show');
+            clearErrors();
+            document.getElementById('name').focus();
+        }
+    </script>
+</body>
+</html>
