@@ -1,0 +1,137 @@
+{
+  "calculator_info": {
+    "name": "Mortgage Pre-Approval Calculator",
+    "description": "Interactive mortgage pre-approval calculator with real-time estimates",
+    "type": "interactive_html_form",
+    "version": "1.0.0"
+  },
+  "access_methods": [
+    {
+      "method": "Direct URL",
+      "url": "https://ravikrish1983.github.io/openai-mortgage-calculator/",
+      "description": "Open directly in browser or use in chat messages"
+    },
+    {
+      "method": "HTML Content",
+      "description": "Full HTML can be rendered or displayed inline",
+      "content_url": "https://raw.githubusercontent.com/Ravikrish1983/openai-mortgage-calculator/main/index.html"
+    }
+  ],
+  "features": [
+    "Full Name input",
+    "Annual Income input",
+    "Monthly Debt Obligations input",
+    "Real-time mortgage calculation",
+    "30-year amortization",
+    "Debt-to-income ratio validation",
+    "Pre-approval card display",
+    "Personalized greeting",
+    "Loan amount estimation",
+    "Down payment calculation (20%)",
+    "Interest rate display (6.1%)",
+    "APR display (6.58%)",
+    "30-day validity period",
+    "Mobile responsive"
+  ],
+  "input_fields": [
+    {
+      "name": "name",
+      "type": "text",
+      "label": "Full Name",
+      "required": true
+    },
+    {
+      "name": "annualIncome",
+      "type": "number",
+      "label": "Annual Income",
+      "currency": "USD",
+      "required": true
+    },
+    {
+      "name": "monthlyDebt",
+      "type": "number",
+      "label": "Monthly Debt Obligations",
+      "currency": "USD",
+      "required": true
+    }
+  ],
+  "output_fields": [
+    {
+      "name": "loanAmount",
+      "label": "Prequalified Loan Amount",
+      "type": "currency"
+    },
+    {
+      "name": "downPayment",
+      "label": "Down Payment Required (20%)",
+      "type": "currency"
+    },
+    {
+      "name": "interestRate",
+      "label": "Interest Rate",
+      "type": "percentage"
+    },
+    {
+      "name": "apr",
+      "label": "Annual Percentage Rate (APR)",
+      "type": "percentage"
+    },
+    {
+      "name": "expirationDate",
+      "label": "Pre-Approval Validity",
+      "type": "date"
+    }
+  ],
+  "openapi_spec": {
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Mortgage Pre-Approval Calculator API",
+      "version": "1.0.0",
+      "description": "Interactive mortgage calculator for OpenAI integration"
+    },
+    "servers": [
+      {
+        "url": "https://ravikrish1983.github.io/openai-mortgage-calculator"
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "getMortgageCalculator",
+          "summary": "Get the mortgage pre-approval calculator",
+          "description": "Returns an interactive HTML form for mortgage pre-approval estimation",
+          "responses": {
+            "200": {
+              "description": "Interactive mortgage calculator HTML page",
+              "content": {
+                "text/html": {
+                  "schema": {
+                    "type": "string",
+                    "description": "Complete HTML page with embedded CSS and JavaScript"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "instructions_for_agents": {
+    "display_method": "LINK",
+    "recommended_approach": "Display as a clickable link that opens in new window/tab",
+    "link_text": "Open Mortgage Calculator",
+    "link_url": "https://ravikrish1983.github.io/openai-mortgage-calculator/",
+    "alternative_method": "Provide the URL as plain text and instruct user to visit it",
+    "note": "Due to iframe restrictions, the calculator should be accessed via direct link",
+    "example_message": "Here's your mortgage pre-approval calculator: [Open Calculator](https://ravikrish1983.github.io/openai-mortgage-calculator/)"
+  },
+  "setup_instructions": {
+    "step_1": "Visit the calculator URL",
+    "step_2": "Enter your Full Name",
+    "step_3": "Enter your Annual Income",
+    "step_4": "Enter your Monthly Debt Obligations",
+    "step_5": "Click 'Get Pre-Approval Estimate'",
+    "step_6": "View your pre-approval card with estimated loan amount, down payment, rate, and APR"
+  }
+}
